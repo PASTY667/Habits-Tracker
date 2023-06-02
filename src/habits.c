@@ -1,15 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "habits.h"
+#include <stdbool.h>
 
-void creerHabitude(ListeHabits *liste) {
-    if (liste->nombreHabits >= MAX_HABITS) {
+#define MAX_HABITUDES 100
+#define MAX_JOURS 7
+
+typedef struct {
+    char nom[50];
+    char description[100];
+    int priorite;
+    bool jours[MAX_JOURS];
+} Habitude;
+
+typedef struct {
+    Habitude habitudes[MAX_HABITUDES];
+    int nombreHabitudes;
+} ListeHabitudes;
+
+void ajouterHabitude(ListeHabitudes *liste) {
+    if (liste->nombreHabitudes >= MAX_HABITUDES) {
         printf("La liste des habitudes est pleine.\n");
         return;
     }
 
-    Habit nouvelleHabitude;
+    Habitude nouvelleHabitude;
 
     printf("Nom de l'habitude : ");
     scanf("%s", nouvelleHabitude.nom);
@@ -18,148 +32,81 @@ void creerHabitude(ListeHabits *liste) {
     scanf("%s", nouvelleHabitude.description);
 
     printf("Priorite de l'habitude : ");
-    scanf("%d", &(nouvelleHabitude.priorite));
+    scanf("%d", &nouvelleHabitude.priorite);
 
-    printf("Date de l'habitude (JJ/MM/AAAA) : ");
-    scanf("%s", nouvelleHabitude.date);
+    for (int i = 0; i < MAX_JOURS; i++) {
+        nouvelleHabitude.jours[i] = false;
+    }
 
-    printf("Heure de l'habitude (HH:MM) : ");
-    scanf("%s", nouvelleHabitude.heure);
+    liste->habitudes[liste->nombreHabitudes] = nouvelleHabitude;
+    liste->nombreHabitudes++;
 
-    nouvelleHabitude.estCochee = 0; // Par défaut, l'habitude n'est pas cochée
-
-    liste->habits[liste->nombreHabits] = nouvelleHabitude;
-    liste->nombreHabits++;
-
-    printf("L'habitude a été créée avec succès.\n");
+    printf("L'habitude a ete ajoutee avec succes.\n");
 }
 
-void afficherHabitude(const Habit *habitude) {
-    printf("Nom : %s\n", habitude->nom);
-    printf("Description : %s\n", habitude->description);
-    printf("Priorite : %d\n", habitude->priorite);
-    printf("Date : %s\n", habitude->date);
-    printf("Heure : %s\n", habitude->heure);
-    printf("Statut : %s\n", habitude->estCochee ? "Cochee" : "Non cochee");
-    printf("---------------\n");
-}
-
-void modifierHabitude(ListeHabits *liste) {
-    if (liste->nombreHabits == 0) {
-        printf("Aucune habitude n'est disponible.\n");
-        return;
-    }
-
-    printf("Choisissez le numero de l'habitude a modifier (1-%d) : ", liste->nombreHabits);
-    int choix;
-    scanf("%d", &choix);
-
-    if (choix < 1 || choix > liste->nombreHabits) {
-        printf("Numero invalide.\n");
-        return;
-    }
-
-    Habit *habitude = &(liste->habits[choix - 1]);
-
-    printf("Nouveau nom de l'habitude : ");
-    scanf("%s", habitude->nom);
-
-    printf("Nouvelle description de l'habitude : ");
-    scanf("%s", habitude->description);
-
-    printf("Nouvelle priorite de l'habitude : ");
-    scanf("%d", &(habitude->priorite));
-
-    printf("Nouvelle date de l'habitude (JJ/MM/AAAA) : ");
-    scanf("%s", habitude->date);
-
-    printf("Nouvelle heure de l'habitude (HH:MM) : ");
-    scanf("%s", habitude->heure);
-
-    printf("L'habitude a été modifiée avec succès.\n");
-}
-
-void supprimerHabitude(ListeHabits *liste) {
-    if (liste->nombreHabits == 0) {
-        printf("Aucune habitude n'est disponible.\n");
-        return;
-    }
-
-    printf("Choisissez le numero de l'habitude a supprimer (1-%d) : ", liste->nombreHabits);
-    int choix;
-    scanf("%d", &choix);
-
-    if (choix < 1 || choix > liste->nombreHabits) {
-        printf("Numero invalide.\n");
-        return;
-    }
-
-    // Supprimer l'habitude en décalant les éléments suivants du tableau
-    for (int i = choix - 1; i < liste->nombreHabits - 1; i++) {
-        liste->habits[i] = liste->habits[i + 1];
-    }
-
-    liste->nombreHabits--;
-
-    printf("L'habitude a été supprimée avec succès.\n");
-}
-
-void afficherHabitudes(const ListeHabits *liste) {
-    if (liste->nombreHabits == 0) {
-        printf("Aucune habitude n'est disponible.\n");
-        return;
-    }
-
-    printf("----- Liste des habitudes -----\n");
-    for (int i = 0; i < liste->nombreHabits; i++) {
-        printf("Habitude %d :\n", i + 1);
-        afficherHabitude(&(liste->habits[i]));
+void cocherJour(Habitude *habitude, int jour) {
+    if (jour >= 0 && jour < MAX_JOURS) {
+        habitude->jours[jour] = !habitude->jours[jour];
     }
 }
 
-void afficherMenu(ListeHabits *liste) {
+void afficherHabitudes(const ListeHabitudes *liste) {
+    printf("---------------------------\n");
+    printf("     Habits Tracker\n");
+    printf("---------------------------\n\n");
+
+    for (int i = 0; i < liste->nombreHabitudes; i++) {
+        const Habitude *habitude = &(liste->habitudes[i]);
+
+        printf("[ Habitude %d ]\n\n", i + 1);
+        printf("Nom : %s\n", habitude->nom);
+        printf("Description : %s\n", habitude->description);
+        printf("Priorite : %d\n", habitude->priorite);
+
+        printf("---------------------------\n");
+        printf("      L      M      M      J      V      S      D\n");
+        printf("---------------------------\n");
+
+        for (int j = 0; j < MAX_JOURS; j++) {
+            printf(" [%c]    ", habitude->jours[j] ? 'V' : 'X');
+        }
+
+        printf("\n\n");
+    }
+}
+
+int main() {
+    ListeHabitudes liste;
+    liste.nombreHabitudes = 0;
+
     int choix = 0;
-
-    while (choix != 5) {
-        printf("----- Menu -----\n");
-        printf("1. Créer une habitude\n");
+    while (choix != 3) {
+        printf("---------------------------\n");
+        printf("     Habits Tracker\n");
+        printf("---------------------------\n\n");
+        printf("1. Ajouter une habitude\n");
         printf("2. Afficher les habitudes\n");
-        printf("3. Modifier une habitude\n");
-        printf("4. Supprimer une habitude\n");
-        printf("5. Quitter\n");
+        printf("3. Quitter\n\n");
         printf("Choix : ");
         scanf("%d", &choix);
 
         switch (choix) {
             case 1:
-                creerHabitude(liste);
+                ajouterHabitude(&liste);
                 break;
             case 2:
-                afficherHabitudes(liste);
+                afficherHabitudes(&liste);
                 break;
             case 3:
-                modifierHabitude(liste);
-                break;
-            case 4:
-                supprimerHabitude(liste);
-                break;
-            case 5:
                 printf("Au revoir !\n");
                 break;
             default:
-                printf("Choix invalide. Veuillez réessayer.\n");
+                printf("Choix invalide. Veuillez reessayer.\n");
                 break;
         }
 
         printf("\n");
     }
-}
-
-int main() {
-    ListeHabits liste;
-    liste.nombreHabits = 0;
-
-    afficherMenu(&liste);
 
     return 0;
 }
