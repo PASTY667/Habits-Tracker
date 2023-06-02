@@ -50,9 +50,53 @@ void creerHabitude(ListeHabits *liste) {
     printf("L'habitude a été créée avec succès.\n");
 }
 
+
 void afficherHabitude(const Habit *habitude) {
     printf("Nom : %s\n", habitude->nom);
     printf("Description : %s\n", habitude->description);
     printf("Priorite : %d\n", habitude->priorite);
-    printf("Date : %s\n",
+    printf("Date : %s\n", habitude->date);
+    printf("Heure : %s\n", habitude->heure);
+    printf("Statut : %s\n", habitude->estCochee ? "Cochee" : "Non cochee");
+    printf("---------------\n");
+}
+
+void modifierHabitude(ListeHabits *liste) {
+    if (liste->nombreHabits == 0) {
+        printf("Aucune habitude n'est disponible.\n");
+        return;
+    }
+
+    printf("Choisissez le numero de l'habitude a modifier (1-%d) : ", liste->nombreHabits);
+    int choix;
+    scanf("%d", &choix);
+
+    if (choix < 1 || choix > liste->nombreHabits) {
+        printf("Numero invalide.\n");
+        return;
+    }
+
+    Habit *habitude = &(liste->habits[choix - 1]);
+
+    printf("Nouveau nom de l'habitude : ");
+    scanf("%s", habitude->nom);
+
+    printf("Nouvelle description de l'habitude : ");
+    scanf("%s", habitude->description);
+
+    printf("Nouvelle priorite de l'habitude : ");
+    scanf("%d", &(habitude->priorite));
+
+    printf("Nouvelle date de l'habitude (JJ/MM/AAAA) : ");
+    scanf("%s", habitude->date);
+
+    printf("Nouvelle heure de l'habitude (HH:MM) : ");
+    scanf("%s", habitude->heure);
+
+    printf("L'habitude a été modifiée avec succès.\n");
+}
+
+void supprimerHabitude(ListeHabits *liste) {
+    if (liste->nombreHabits == 0) {
+        printf("A
 
