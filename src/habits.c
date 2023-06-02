@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "habits.h"
 
@@ -101,4 +102,64 @@ void supprimerHabitude(ListeHabits *liste) {
     liste->nombreHabits--;
 
     printf("L'habitude a été supprimée avec succès.\n");
+}
+
+void afficherHabitudes(const ListeHabits *liste) {
+    if (liste->nombreHabits == 0) {
+        printf("Aucune habitude n'est disponible.\n");
+        return;
+    }
+
+    printf("----- Liste des habitudes -----\n");
+    for (int i = 0; i < liste->nombreHabits; i++) {
+        printf("Habitude %d :\n", i + 1);
+        afficherHabitude(&(liste->habits[i]));
+    }
+}
+
+void afficherMenu(ListeHabits *liste) {
+    int choix = 0;
+
+    while (choix != 5) {
+        printf("----- Menu -----\n");
+        printf("1. Créer une habitude\n");
+        printf("2. Afficher les habitudes\n");
+        printf("3. Modifier une habitude\n");
+        printf("4. Supprimer une habitude\n");
+        printf("5. Quitter\n");
+        printf("Choix : ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1:
+                creerHabitude(liste);
+                break;
+            case 2:
+                afficherHabitudes(liste);
+                break;
+            case 3:
+                modifierHabitude(liste);
+                break;
+            case 4:
+                supprimerHabitude(liste);
+                break;
+            case 5:
+                printf("Au revoir !\n");
+                break;
+            default:
+                printf("Choix invalide. Veuillez réessayer.\n");
+                break;
+        }
+
+        printf("\n");
+    }
+}
+
+int main() {
+    ListeHabits liste;
+    liste.nombreHabits = 0;
+
+    afficherMenu(&liste);
+
+    return 0;
 }
