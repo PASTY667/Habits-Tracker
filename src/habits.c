@@ -18,7 +18,9 @@ void supprimerHabitude(ListeHabits *liste) {
     // Code pour supprimer une habitude de la liste
 }
 
-
+#include <stdio.h>
+#include <string.h>
+#include "habits.h"
 
 void creerHabitude(ListeHabits *liste) {
     if (liste->nombreHabits >= 100) {
@@ -49,7 +51,6 @@ void creerHabitude(ListeHabits *liste) {
 
     printf("L'habitude a été créée avec succès.\n");
 }
-
 
 void afficherHabitude(const Habit *habitude) {
     printf("Nom : %s\n", habitude->nom);
@@ -98,5 +99,25 @@ void modifierHabitude(ListeHabits *liste) {
 
 void supprimerHabitude(ListeHabits *liste) {
     if (liste->nombreHabits == 0) {
-        printf("A
+        printf("Aucune habitude n'est disponible.\n");
+        return;
+    }
 
+    printf("Choisissez le numero de l'habitude a supprimer (1-%d) : ", liste->nombreHabits);
+    int choix;
+    scanf("%d", &choix);
+
+    if (choix < 1 || choix > liste->nombreHabits) {
+        printf("Numero invalide.\n");
+        return;
+    }
+
+    // Supprimer l'habitude en décalant les éléments suivants du tableau
+    for (int i = choix - 1; i < liste->nombreHabits - 1; i++) {
+        liste->habits[i] = liste->habits[i + 1];
+    }
+
+    liste->nombreHabits--;
+
+    printf("L'habitude a été supprimée avec succès.\n");
+}
