@@ -1,34 +1,15 @@
 #include <stdio.h>
-#include "habits.h"
-#include <string.h>
-
-void creerHabitude(ListeHabits *liste) {
-    // Code pour créer une nouvelle habitude
-}
-
-void afficherHabitude(const Habit *habitude) {
-    // Code pour afficher une habitude
-}
-
-void modifierHabitude(ListeHabits *liste) {
-    // Code pour modifier une habitude existante
-}
-
-void supprimerHabitude(ListeHabits *liste) {
-    // Code pour supprimer une habitude de la liste
-}
-
-#include <stdio.h>
 #include <string.h>
 #include "habits.h"
 
 void creerHabitude(ListeHabits *liste) {
-    if (liste->nombreHabits >= 100) {
+    if (liste->nombreHabits >= MAX_HABITS) {
         printf("La liste des habitudes est pleine.\n");
         return;
     }
 
     Habit nouvelleHabitude;
+
     printf("Nom de l'habitude : ");
     scanf("%s", nouvelleHabitude.nom);
 
